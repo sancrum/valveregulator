@@ -1,19 +1,21 @@
 /*Программа управления газовым регулятора Honeywell Atmix VK47/vk##
 * Участвуют Энкодер, экран 1602, шаговый двигатель, твердотельное реле
 * 
-* 
+* Версия 1.2
+* цифровой преобразователь для термопар заменен с max6675 на max31855
 *                                                                                                                                                                                                                                                                                                                  
 * Версия 1.1                                                                                                                                                                                                                                                                                                                 
 * добавлена версионность
 * добавлен коэффициент мощности 0,85 (100% на энкодере эквивалентно 85% открытия (92*0,85=72 шага максимум)
 */
-byte subversion = 1; //1.1
+byte subversion = 2; //1.1
   
 #include <ModbusRtu.h>
 #include <SPI.h>
 #include <Rotary.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <MAX31855.h>
 
 ////////////////////////////////////////////////настройка LCD
 LiquidCrystal_I2C lcd(0x3f, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
@@ -51,29 +53,32 @@ int stepsPerRevolution = 92;
 int setPosition;
 
 //////////////////////////////////////////////////настройка SPI MAX6675
-//2 модуля max6675 temperature sensor
-int thermoSO = 12;  // MISO
-int thermoCLK = 13; // SCK
-int tc1CS = 10;   //SS
-int tc2CS = 9;   //SS2
+////2 модуля max6675 temperature sensor
+//int thermoSO = 12;  // MISO
+//int thermoCLK = 13; // SCK
+//int tc1CS = 10;   //SS
+//int tc2CS = 9;   //SS2
+MAX31855 tc1(10); ////////////////////////////////настройка SPI max31855
+MAX31855 tc2(9); 
+
 
 //Замер проб температуры
 uint16_t currentTemp;
 unsigned long probedelay =0;
 unsigned long tempus =0;   //
 
-//minimal max6675.h inside this project
-double readCelsius(uint8_t cs){
-    uint16_t v;
-    digitalWrite(cs, LOW);
-    v = SPI.transfer(0x00);
-    v <<= 8;
-    v |= SPI.transfer(0x00);
-    digitalWrite(cs, HIGH);
-    if (v & 0x4) { return NAN;} // uh oh, no thermocouple attached!
-    v >>= 3;
-    return v*0.25;
-}
+////minimal max6675.h inside this project
+//double readCelsius(uint8_t cs){
+//    uint16_t v;
+//    digitalWrite(cs, LOW);
+//    v = SPI.transfer(0x00);
+//    v <<= 8;
+//    v |= SPI.transfer(0x00);
+//    digitalWrite(cs, HIGH);
+//    if (v & 0x4) { return NAN;} // uh oh, no thermocouple attached!
+//    v >>= 3;
+//    return v*0.25;
+//}
 
 ////////////////// настройка управления твердотельным реле для второго клапана крана
 int relayPin=14;
@@ -86,7 +91,12 @@ void setup() {
   lcd.setCursor(0,0); 
   lcd.println("NevaCoffee");
   lcd.print("1.");lcd.print(subversion);
-  delay(3000);
+ tc1.begin(); // Set thermocouple
+ tc2.begin(); 
+  while ((tc1.getChipID() != MAX31855_ID)and(tc2.getChipID() != MAX31855_ID))  {
+    Serial.println(F("MAX31855 error")); //(F()) saves string to flash & keeps dynamic memory free
+    delay(5000);
+  }
   lcd.setCursor(0,0); 
   lcd.print("powered by");
   lcd.setCursor(0,1); 
@@ -139,8 +149,8 @@ void loop() {
 
 //get temperature every probeDelay  
  if (millis() > probedelay) {  
-  au16data[3]=readCelsius(tc1CS)*100-1000;
-  au16data[4]=readCelsius(tc2CS)*100-1000;
+  au16data[3]=tc1.getTemperature();*100;
+  au16data[4]=tc2.getTemperature();)*100;
   probedelay = millis() + 1000;
    
   lcd.setCursor(3,0);  lcd.print("   "); lcd.setCursor(3,0);  lcd.print(au16data[3]/100);

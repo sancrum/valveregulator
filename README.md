@@ -1,7 +1,7 @@
 # valveregulator with dual thermocouple sensors
 Arduino project to control valve regulator with bipolar stepper motor drive.
 
-Dual thermocoupe thermerature control
+Dual thermocouple temperature control
 
 ModbusRTU compatible over serial port.
 

@@ -23,12 +23,16 @@ MAX31855 by Enjoyneering
 		https://github.com/enjoyneering/MAX31855
 
 Modbus slave ID 1. Modbus registers are:
+
 3 - first thermocouple data *100 multiplier
+
 4 - second thermocouple data *100 multiplier
+
 6 - current power percentage (view changeog version 1.1)
 
 
 CHANGELOG
+
 version 1.2 || New thermocouple-to-digital converter MAX31855k
 
 version 1.1 || maximum allowed power (100%) equals 85% actual valve regulator opening

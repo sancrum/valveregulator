@@ -136,6 +136,12 @@ void setup() {
 void loop() {
 //poll MODBUS
  state = slave.poll( au16data, 11 );
+/* 3 - tc1; 4 tc2
+ * 6 - power percentage with 0.85 multiplier
+ * 
+ * 
+ */ 
+
  
   unsigned char result = r.process();
   if (result == DIR_CW) {

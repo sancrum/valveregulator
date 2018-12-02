@@ -124,10 +124,10 @@ void setup() {
 
 
 //set max6675 slaves   
-  pinMode(tc1CS, OUTPUT);
-  pinMode(tc2CS, OUTPUT);
-  digitalWrite(tc1CS, HIGH);
-  digitalWrite(tc2CS, HIGH);
+//  pinMode(tc1CS, OUTPUT);
+ // pinMode(tc2CS, OUTPUT);
+//  digitalWrite(tc1CS, HIGH);
+//  digitalWrite(tc2CS, HIGH);
 
   tempus = millis() + 100;
   probedelay = millis()+3000;
@@ -155,15 +155,15 @@ void loop() {
 
 //get temperature every probeDelay  
  if (millis() > probedelay) {  
-  au16data[3]=tc1.getTemperature();*100;
-  au16data[4]=tc2.getTemperature();)*100;
+  au16data[3]=tc1.getTemperature()*100;
+  au16data[4]=tc2.getTemperature()*100;
   probedelay = millis() + 1000;
    
   lcd.setCursor(3,0);  lcd.print("   "); lcd.setCursor(3,0);  lcd.print(au16data[3]/100);
   lcd.setCursor(12,0); lcd.print("   "); lcd.setCursor(12,0); lcd.print(au16data[4]/100);
  }
 
- setPower = au16data[6]*/100*85/100; 
+ setPower = au16data[6]*100*85/100; 
  setPower = (stepsPerRevolution)*setPower;
  setPower = setPower /100;
  if (setPower != currentPosition) { 

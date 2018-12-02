@@ -9,7 +9,17 @@ Manual control by encoder.
 
 Dispalay LCD1602 with I2C driver PCF8574.
 
-Used libraries are:
+**Project schema**
+Attention! Present schematic is full of simplifying. Sorry for that.
+1. LCD connection does not present it's actual soldering. I've used LCD1602 module with I2C already soldered together. So it has specific 4-wire connection GND-VCC-SDA-SCL.
+
+2. MAX6755 modules drawing is not real-like. It's actual pinout is: 1-GND, 2-VCC, 3-SCK, 4-CS, 5-MISO
+
+3. NEMAmotor + SSR equals to valveregulator Atmix VK43##. It contains bipolar stepper motor (4 coils) on valve and SSR-drived opener. SSR is 3..32DC control and 220AC operation.
+
+
+
+**Used libraries are:**
 ModbusRTU by  	Samuel Marco i Armengol
                 https://github.com/smarmengol/Modbus-Master-Slave-for-Arduino
 

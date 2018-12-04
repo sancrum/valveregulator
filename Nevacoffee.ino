@@ -1,7 +1,8 @@
 /*Программа управления газовым регулятора Honeywell Atmix VK47/vk##
 * Участвуют Энкодер, экран 1602, шаговый двигатель, твердотельное реле
 * 
-* Версия 1.2 bis
+* 1.3
+* Версия 1.2
 * цифровой преобразователь для термопар заменен с max6675 на max31855
 *                                                                                                                                                                                                                                                                                                                  
 * Версия 1.1                                                                                                                                                                                                                                                                                                                 
@@ -56,10 +57,10 @@ int setPosition;
 ////2 модуля max6675 temperature sensor
 //int thermoSO = 12;  // MISO
 //int thermoCLK = 13; // SCK
-//int tc1CS = 10;   //SS
-//int tc2CS = 9;   //SS2
-MAX31855 tc1(10); ////////////////////////////////настройка SPI max31855
-MAX31855 tc2(9); 
+int tc1CS = 10;   //SS
+int tc2CS = 9;   //SS2
+MAX31855 tc1(tc1CS); ////////////////////////////////настройка SPI max31855
+MAX31855 tc2(tc2CS); 
 
 
 //Замер проб температуры
@@ -124,10 +125,10 @@ void setup() {
 
 
 //set max6675 slaves   
-//  pinMode(tc1CS, OUTPUT);
- // pinMode(tc2CS, OUTPUT);
-//  digitalWrite(tc1CS, HIGH);
-//  digitalWrite(tc2CS, HIGH);
+  pinMode(tc1CS, OUTPUT);
+  pinMode(tc2CS, OUTPUT);
+  digitalWrite(tc1CS, HIGH);
+  digitalWrite(tc2CS, HIGH);
 
   tempus = millis() + 100;
   probedelay = millis()+3000;
@@ -218,7 +219,7 @@ void setMotor( int setPosition)
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW); 
     stepperIdle = true;
-
+     Serial.print("0");
   }
 }
 
@@ -280,7 +281,7 @@ void stepper(){
       digitalWrite(IN4, LOW);
       break;
     }
-
+     Serial.print("H");
 }
 
 void SetDirection(){
